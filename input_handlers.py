@@ -1,15 +1,14 @@
-from typing import Optional
-
+from __future__ import annotations
 import tcod.event
 
 from actions import Action, EscapeAction, MovementAction
 
 class EventHandler(tcod.event.EventDispatch[Action]):
-    def ev_quit(self, event: tcod.event.Quit) -> Optional[Action]:
-        raise systemExit()
+    def ev_quit(self, event: tcod.event.Quit) -> Action | None:
+        raise SystemExit()
 
-    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
-        action: Optional[Action] = None
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Action | None:
+        action: Action | None = None
 
         key = event.sym
 
