@@ -13,8 +13,8 @@ def main() -> None:
     screen_width = 80
     screen_height = 50
 
-    map_width = 80
-    map_height = 45
+    map_width = screen_width
+    map_height = screen_height - 5
 
     tilesheet_filename = "dejavu10x10_gs_tc.png"
 
@@ -24,6 +24,8 @@ def main() -> None:
     player = Entity(player_x, player_y, char="@", color=(255, 255, 255))
     npc = Entity(player_x - 5, player_y, char="@", color=(255, 255, 0))
 
+    # all the living, moving, acting things in the game
+    # (player, npcs, enemies, monsters, etc)
     entities = {npc, player}
 
     tileset = tcod.tileset.load_tilesheet(
@@ -33,21 +35,25 @@ def main() -> None:
 
     game_map = GameMap(map_width, map_height)
 
-    engine = Engine(entities=entities, event_handler=event_handler, game_map=game_map, player=player)
+    engine = Engine(entities=entities,
+            event_handler=event_handler,
+            game_map=game_map,
+            player=player)
 
     with tcod.context.new_terminal(
             screen_width,
             screen_height,
             tileset=tileset,
-            title="LoserQuest",
+            title="Game",
             vsync=True) as context:
-        root_console = tcod.console.Console(screen_width, screen_height, order="F")
-
+        root_console = tcod.console.Console(screen_width,
+                screen_height,
+                order="F")
 
         while True:
             engine.handle_events(tcod.event.wait())
-
             engine.render(console=root_console, context=context)
+
 
 if __name__ == "__main__":
     main()
