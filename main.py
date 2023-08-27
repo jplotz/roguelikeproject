@@ -3,6 +3,7 @@ import tcod
 
 from actions import EscapeAction, MovementAction
 from input_handlers import EventHandler
+from procgen import generate_dungeon
 
 from entity import Entity
 from game_map import GameMap
@@ -15,6 +16,10 @@ def main() -> None:
 
     map_width = screen_width
     map_height = screen_height - 5
+
+    room_max_size = 10
+    room_min_size = 6
+    max_rooms = 30
 
     tilesheet_filename = "dejavu10x10_gs_tc.png"
 
@@ -33,7 +38,12 @@ def main() -> None:
 
     event_handler = EventHandler()
 
-    game_map = GameMap(map_width, map_height)
+    game_map = generate_dungeon(max_rooms,
+            room_min_size,
+            room_max_size,
+            map_width,
+            map_height,
+            player)
 
     engine = Engine(entities=entities,
             event_handler=event_handler,
