@@ -12,7 +12,7 @@ from engine import Engine
 
 def main() -> None:
     screen_width = 80
-    screen_height = 50
+    screen_height = 24
 
     map_width = screen_width
     map_height = screen_height - 5
@@ -44,6 +44,9 @@ def main() -> None:
             map_width,
             map_height,
             player)
+
+    print(game_map.tiles["walkable"][0, 0])
+    print(game_map.tiles[0, 0]["walkable"])
 
     engine = Engine(entities=entities,
             event_handler=event_handler,

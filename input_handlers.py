@@ -3,7 +3,19 @@ import tcod.event
 
 from actions import Action, EscapeAction, MovementAction
 
+# Q: Why does it say tcod.event.EventDispatch[Action]? Why is the [Action]
+# there?
+# A: see https://python-tcod.readthedocs.io/en/latest/_modules/tcod/event.html#EventDispatch
+# "The type hints at the return value of :any:`dispatch` and the `ev_*` methods"
+
 class EventHandler(tcod.event.EventDispatch[Action]):
+    """
+    Inherits from EventDispatch class. This is how to use it:
+    e = EventHandler()
+    action = e.dispatch(event)
+    if action is not None:
+        action.perform(...)
+    """
     def ev_quit(self, event: tcod.event.Quit) -> Action | None:
         raise SystemExit()
 

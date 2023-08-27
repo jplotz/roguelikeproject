@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+# see https://docs.python.org/3/library/typing.html#typing.TYPE_CHECKING
 if TYPE_CHECKING:
     from engine import Engine
     from entity import Entity
@@ -29,11 +30,12 @@ class MovementAction(Action):
         self.dy = dy
 
     def perform(self, scope_engine: Engine, doer_entity: Entity) -> None:
-        new_x = doer_entity.x+self.dx
-        new_y = doer_entity.y+self.dy
+        new_x = doer_entity.x + self.dx
+        new_y = doer_entity.y + self.dy
         # the in-bounds check must come first before the tile array access
         if not scope_engine.game_map.in_bounds(new_x, new_y):
             return
         if not scope_engine.game_map.tiles["walkable"][new_x, new_y]:
             return
+        # assuming the above checks were passed, we can now have the entity move
         doer_entity.move(dx=self.dx, dy=self.dy)
