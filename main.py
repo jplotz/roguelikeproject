@@ -5,6 +5,7 @@ from actions import EscapeAction, MovementAction
 from input_handlers import EventHandler
 from procgen import generate_dungeon
 
+
 from entity import Entity
 from game_map import GameMap
 from engine import Engine
@@ -21,17 +22,14 @@ def main() -> None:
     room_min_size = 6
     max_rooms = 30
 
+    max_monsters_per_room = 2
+
     tilesheet_filename = "dejavu10x10_gs_tc.png"
 
     player_x = int(screen_width / 2)
     player_y = int(screen_height / 2)
 
     player = Entity(player_x, player_y, char="@", color=(255, 255, 255))
-    npc = Entity(player_x - 5, player_y, char="@", color=(255, 255, 0))
-
-    # all the living, moving, acting things in the game
-    # (player, npcs, enemies, monsters, etc)
-    entities = {npc, player}
 
     tileset = tcod.tileset.load_tilesheet(
             tilesheet_filename, 32, 8, tcod.tileset.CHARMAP_TCOD)
@@ -43,12 +41,10 @@ def main() -> None:
             room_max_size,
             map_width,
             map_height,
+            max_monsters_per_room,
             player)
 
-    print(game_map.tiles["walkable"][0, 0])
-    print(game_map.tiles[0, 0]["walkable"])
-
-    engine = Engine(entities=entities,
+    engine = Engine(
             event_handler=event_handler,
             game_map=game_map,
             player=player)

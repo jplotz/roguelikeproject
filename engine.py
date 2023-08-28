@@ -18,11 +18,10 @@ from game_map import GameMap
 # render menus or status lines.
 
 class Engine:
-    def __init__(self, entities: Set[Entity],
+    def __init__(self,
             event_handler: EventHandler,
             game_map: GameMap,
             player: Entity):
-        self.entities = entities
         self.event_handler = event_handler
         self.game_map = game_map
         self.player = player
@@ -42,7 +41,7 @@ class Engine:
         self.game_map.visible[:] = compute_fov(
                 self.game_map.tiles["transparent"],
                 (self.player.x, self.player.y),
-                radius=8)
+                radius=5)
 
         # if the player can see a tile then they have explored it
         # "visible" tiles should be added to "explored"
@@ -50,10 +49,6 @@ class Engine:
 
     def render(self, console: Console, context: Context) -> None:
         self.game_map.render(console)
-
-        for entity in self.entities:
-            if self.game_map.visible[entity.x, entity.y]:
-                console.print(entity.x, entity.y, entity.char, fg=entity.color)
 
         context.present(console)
         console.clear()

@@ -10,6 +10,8 @@ import tcod
 from game_map import GameMap
 import tile_types
 
+from entity import Entity
+
 
 Point = namedtuple("Point", "x y")
 PointRange = namedtuple("PointRange", "xslice yslice")
@@ -69,8 +71,10 @@ def generate_dungeon(
         room_max_size: int,
         map_width: int,
         map_height: int,
+        max_monsters_per_room: int,
         player: Entity) -> GameMap:
-    dungeon = GameMap(map_width, map_height)
+    dungeon = GameMap(map_width, map_height, entities={player})
+
 
     rooms: List[RectangularRoom] = []
 
@@ -97,5 +101,13 @@ def generate_dungeon(
                 dungeon.tiles[x, y] = tile_types.floor
 
         rooms.append(new_room)
+
+        for i in range(random.randint(0, max_monsters_per_room)):
+            if random.random() < 0.8: # 80% chance
+                # spawn an orc
+                dungeon.entities.add(Entity(new_room.center.x, new_room.center.y, "o", (255, 255, 0)))
+            else: # 20% chance
+                # spawn a troll
+                dungeon.entities.add(Entity(new_room.center.x, new_room.center.y, "T", (0, 255, 0)))
 
     return dungeon
