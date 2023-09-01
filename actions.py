@@ -22,13 +22,18 @@ class EscapeAction(Action):
     def perform(self, scope_engine: Engine, doer_entity: Entity) -> None:
         raise SystemExit()
 
-class MovementAction(Action):
+class ActionWithDirection(Action):
     def __init__(self, dx: int, dy: int):
         super().__init__()
 
         self.dx = dx
         self.dy = dy
 
+    def perform(self, scope_engine: Engine, doer_entity: Entity) -> None:
+        raise NotImplementedError()
+
+
+class MovementAction(ActionWithDirection):
     def perform(self, scope_engine: Engine, doer_entity: Entity) -> None:
         new_x = doer_entity.x + self.dx
         new_y = doer_entity.y + self.dy
@@ -39,3 +44,26 @@ class MovementAction(Action):
             return
         # assuming the above checks were passed, we can now have the entity move
         doer_entity.move(dx=self.dx, dy=self.dy)
+
+class MeleeAction(ActionWithDirection):
+    def perform(self, scope_engine: Engine, doer_entity: Entity) -> None:
+        dest_x = doer_entity.x + self.dx
+        dest_y = doer_entity.y + self.dy
+        victim = scope_engine.game_map.get_blocking_entity_at_location(dest_x,
+                dest_y)
+        if victim is None:
+            return # there is nothing to attack here
+
+        print(f"You kick the {victim.name}.")
+
+
+class BumpAction(ActionWithDirection):
+    def perform(self, scope_engine: Engine, doer_entity: Entity) -> None:
+        dest_x = doer_entity.x + self.dx
+        dest_y = doer_entity.y + self.dy
+
+        if scope_engine.game_map.get_blocking_entity_at_location(dest_x,
+                dest_y):
+            MeleeAction(self.dx, self.dy).perform(scope_engine, doer_entity)
+        else:
+            MovementAction(self.dx, self.dy).perform(scope_engine, doer_entity)

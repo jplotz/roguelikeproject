@@ -10,6 +10,9 @@ from entity import Entity
 from game_map import GameMap
 from engine import Engine
 
+from copy import deepcopy
+import entity_factories
+
 
 def main() -> None:
     screen_width = 80
@@ -26,10 +29,7 @@ def main() -> None:
 
     tilesheet_filename = "dejavu10x10_gs_tc.png"
 
-    player_x = int(screen_width / 2)
-    player_y = int(screen_height / 2)
-
-    player = Entity(player_x, player_y, char="@", color=(255, 255, 255))
+    player = deepcopy(entity_factories.player)
 
     tileset = tcod.tileset.load_tilesheet(
             tilesheet_filename, 32, 8, tcod.tileset.CHARMAP_TCOD)

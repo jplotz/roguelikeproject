@@ -11,6 +11,7 @@ from game_map import GameMap
 import tile_types
 
 from entity import Entity
+import entity_factories
 
 
 Point = namedtuple("Point", "x y")
@@ -65,6 +66,23 @@ def tunnel_between(start: Point, end: Point) -> Iterator[Point]:
     for (x, y) in tcod.los.bresenham(corner, end).tolist():
         yield Point(x=x, y=y)
 
+def place_entities(room: RectangularRoom,
+        dungeon: GameMap,
+        max_monsters: int) -> None:
+    num_monsters_to_place = random.randint(0, max_monsters)
+
+    for i in range(num_monsters_to_place):
+        p = Point(random.randint(room.p1.x + 1, room.p2.x - 1),
+                  random.randint(room.p1.y + 1, room.p2.y - 1))
+        if not any(entity.x == p.x and entity.y == p.y for entity in dungeon.entities):
+            if random.random() < 0.8: # 80% chance
+                # spawn an orc
+                entity_factories.orc.spawn(dungeon, p.x, p.y)
+            else: # 20% chance
+                # spawn a troll
+                entity_factories.troll.spawn(dungeon, p.x, p.y)
+
+
 def generate_dungeon(
         max_rooms: int,
         room_min_size: int,
@@ -100,14 +118,7 @@ def generate_dungeon(
             for (x, y) in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.floor
 
+        place_entities(new_room, dungeon, max_monsters_per_room)
         rooms.append(new_room)
-
-        for i in range(random.randint(0, max_monsters_per_room)):
-            if random.random() < 0.8: # 80% chance
-                # spawn an orc
-                dungeon.entities.add(Entity(new_room.center.x, new_room.center.y, "o", (255, 255, 0)))
-            else: # 20% chance
-                # spawn a troll
-                dungeon.entities.add(Entity(new_room.center.x, new_room.center.y, "T", (0, 255, 0)))
 
     return dungeon
